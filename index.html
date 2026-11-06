@@ -301,6 +301,12 @@
             });
 
             try {
+                if (!refFile || !artFile) {
+                    alert('Por favor, selecione ambas as imagens.');
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                    return;
+                }
                 const refBase64 = await toBase64(refFile);
                 const artBase64 = await toBase64(artFile);
 
@@ -323,7 +329,7 @@
                 closeModal();
                 alert('🚀 Pedido criado com sucesso!');
             } catch (err) {
-                alert('Erro ao processar imagens. Tente fotos menores.');
+                alert('Erro ao carregar imagens: ' + err.message);
                 console.error(err);
             } finally {
                 btn.disabled = false;
