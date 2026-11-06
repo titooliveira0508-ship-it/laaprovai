@@ -208,3 +208,149 @@
     <footer class="text-center text-xs text-[#A5A1B3] py-10">
         LAA-APPS: "Sua ideia virou app"
     </footer>
+
+    <script>
+        let orders = JSON.parse(localStorage.getItem('aprovai_orders')) || [];
+
+        function renderOrders() {
+            const table = document.getElementById('ordersTable');
+            const emptyState = document.getElementById('emptyState');
+            if (!table) return;
+
+            table.innerHTML = '';
+
+            if (orders.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                orders.sort((a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate));
+
+                orders.forEach(order => {
+                    let statusBadge = '';
+                    if (order.status === 'approved') {
+                        statusBadge = '<span class="bg-green-50 text-green-700 px-3 py-1 rounded-full font-bold text-[10px] border border-green-100 uppercase">✓ Aprovado</span>';
+                    } else if (order.status === 'changes') {
+                        statusBadge = '<span class="bg-rose-50 text-rose-700 px-3 py-1 rounded-full font-bold text-[10px] border border-rose-100 uppercase">✏️ Ajustes</span>';
+                    } else {
+                        statusBadge = '<span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-bold text-[10px] border border-amber-100 uppercase">● Pendente</span>';
+                    }
+
+                    const row = `
+                        <tr class="hover:bg-background/50 transition border-b border-[#EAE7F2]">
+                            <td class="py-4 px-6">
+                                <div class="font-extrabold text-text-primary">${order.clientName}</div>
+                                <div class="text-[10px] text-text-secondary font-medium">${order.clientPhone}</div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center -space-x-3 hover:space-x-1 transition-all duration-300">
+                                    <img src="${order.refImageUrl || order.imageUrl}" class="w-10 h-10 rounded-lg border-2 border-white shadow-sm object-cover bg-gray-100">
+                                    <img src="${order.imageUrl}" class="w-10 h-10 rounded-lg border-2 border-white shadow-sm object-cover bg-gray-100">
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="font-bold text-text-primary">${order.productTitle}</div>
+                                <div class="text-[10px] text-text-muted truncate max-w-[150px]">${order.notes || '-'}</div>
+                            </td>
+                            <td class="py-4 px-6 font-bold text-text-secondary">
+                                ${order.deliveryDate.split('-').reverse().join('/')}
+                            </td>
+                            <td class="py-4 px-6">${statusBadge}</td>
+                            <td class="py-4 px-6 text-right space-x-2">
+                                <button onclick="copyLink('${order.id}')" class="text-primary hover:text-primary-dark font-bold text-xs">Copiar Link</button>
+                                <button onclick="deleteOrder('${order.id}')" class="text-rose-400 hover:text-rose-600 font-bold text-xs">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                    table.innerHTML += row;
+                });
+            }
+
+            // Atualizar Stats
+            document.getElementById('statTotal').innerText = orders.length;
+            document.getElementById('statPending').innerText = orders.filter(o => o.status === 'pending').length;
+            document.getElementById('statApproved').innerText = orders.filter(o => o.status === 'approved').length;
+            document.getElementById('statChanges').innerText = orders.filter(o => o.status === 'changes').length;
+        }
+
+        function openModal() {
+            document.getElementById('orderModal').classList.remove('hidden');
+            document.getElementById('orderModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').classList.remove('flex');
+            document.getElementById('orderModal').classList.add('hidden');
+            document.getElementById('orderForm').reset();
+        }
+
+        async function saveOrder(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'Salvando...';
+
+            const refFile = document.getElementById('refImageFile').files[0];
+            const artFile = document.getElementById('artImageFile').files[0];
+
+            const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+
+            try {
+                const refBase64 = await toBase64(refFile);
+                const artBase64 = await toBase64(artFile);
+
+                const newOrder = {
+                    id: 'ord_' + Date.now(),
+                    clientName: document.getElementById('clientName').value,
+                    clientPhone: document.getElementById('clientPhone').value,
+                    deliveryDate: document.getElementById('deliveryDate').value,
+                    productTitle: document.getElementById('productTitle').value,
+                    notes: document.getElementById('notes').value,
+                    refImageUrl: refBase64,
+                    imageUrl: artBase64,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
+
+                orders.push(newOrder);
+                localStorage.setItem('aprovai_orders', JSON.stringify(orders));
+                renderOrders();
+                closeModal();
+                alert('🚀 Pedido criado com sucesso!');
+            } catch (err) {
+                alert('Erro ao processar imagens. Tente fotos menores.');
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        function copyLink(id) {
+            const link = `${window.location.origin}/cliente.html?id=${id}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('🔗 Link de aprovação copiado!');
+            });
+        }
+
+        function deleteOrder(id) {
+            if (confirm('Deseja excluir este pedido?')) {
+                orders = orders.filter(o => o.id !== id);
+                localStorage.setItem('aprovai_orders', JSON.stringify(orders));
+                renderOrders();
+            }
+        }
+
+        function logout() {
+            window.location.href = 'login.html';
+        }
+
+        window.onload = renderOrders;
+    </script>
+</body>
+</html>
