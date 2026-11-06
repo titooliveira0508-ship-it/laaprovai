@@ -149,10 +149,11 @@
                         <td class="py-4 px-6 text-sm font-medium text-text-secondary">R$ ${parseFloat(store.plan).toFixed(2).replace('.', ',')}</td>
                         <td class="py-4 px-6 text-sm font-mono text-primary font-bold">${store.pass}</td>
                         <td class="py-4 px-6">${statusBadge}</td>
-                        <td class="py-4 px-6 text-right">
+                        <td class="py-4 px-6 text-right space-x-2">
                             <button onclick="toggleStore('${store.id}')" class="text-xs font-bold ${store.status === 'active' ? 'text-rose-500' : 'text-green-600'} hover:underline">
                                 ${store.status === 'active' ? 'Bloquear' : 'Desbloquear'}
                             </button>
+                            <button onclick="deleteStore('${store.id}')" class="text-xs font-bold text-rose-700 hover:underline">Excluir</button>
                         </td>
                     </tr>
                 `;
@@ -194,6 +195,13 @@
             const store = stores.find(s => s.id === id);
             if (store) {
                 store.status = store.status === 'active' ? 'blocked' : 'active';
+                renderStores();
+            }
+        }
+
+        function deleteStore(id) {
+            if (confirm('Tem certeza que deseja excluir esta loja? Todos os dados dela serão removidos.')) {
+                stores = stores.filter(s => s.id !== id);
                 renderStores();
             }
         }
