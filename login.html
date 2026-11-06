@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — AprovAí</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6C4CF1',
+                        'primary-dark': '#4338CA',
+                        background: '#F8F7FC',
+                        surface: '#FFFFFF',
+                        border: '#EAE7F2',
+                        'text-primary': '#19152B',
+                        'text-secondary': '#77738A',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #F8F7FC; color: #19152B; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 selection:bg-primary selection:text-white">
+
+    <div class="max-w-md w-full bg-white border border-[#EAE7F2] shadow-[0_16px_50px_rgba(35,20,80,0.12)] rounded-[24px] p-8 space-y-6">
+
+        <div class="text-center space-y-2">
+            <div class="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center font-extrabold text-2xl mx-auto shadow-lg shadow-violet-500/20">✓</div>
+            <h1 class="text-2xl font-extrabold tracking-tight">AprovAí <span class="text-primary text-xs bg-violet-50 px-2.5 py-1 rounded-full uppercase">PRO</span></h1>
+            <p class="text-xs text-[#77738A]">Acesse o painel de controle da Felícia Personalizados</p>
+        </div>
+
+        <form onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-[#77738A] uppercase mb-1.5">Senha de Acesso</label>
+                <input type="password" id="loginPassword" required placeholder="Digite sua senha (ex: 1234)" class="w-full px-4 py-3.5 rounded-[14px] bg-[#F8F7FC] border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+            </div>
+
+            <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3.5 px-6 rounded-[14px] shadow-lg shadow-violet-500/20 transition-all text-sm">
+                Entrar no Painel
+            </button>
+        </form>
+
+        <div class="text-center pt-2">
+            <p class="text-[11px] text-[#A5A1B3]">Protegido por criptografia local • AprovAí SaaS</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Senha padrão inicial do Tito / Felícia Personalizados
+        // Em breve conectaremos ao banco Neon com usuários reais.
+        const SENHA_MESTRA = "felicia123";
+
+        // Se já estiver logado, redireciona direto
+        if (localStorage.getItem('aprovai_logged') === 'true') {
+            window.location.href = 'index.html';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('loginPassword').value;
+
+            if (pass === SENHA_MESTRA) {
+                localStorage.setItem('aprovai_logged', 'true');
+                alert('✨ Bem-vindo ao AprovAí!');
+                window.location.href = 'index.html';
+            } else {
+                alert('❌ Senha incorreta! (Senha padrão de teste: felicia123)');
+            }
+        }
+    </script>
+</body>
+</html>

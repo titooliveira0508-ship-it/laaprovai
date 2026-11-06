@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AprovAí — Gestão de Aprovações</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6C4CF1',
+                        'primary-dark': '#4338CA',
+                        'primary-light': '#A78BFA',
+                        accent: '#0EA5E9',
+                        background: '#F8F7FC',
+                        surface: '#FFFFFF',
+                        'surface-soft': '#F1EEFF',
+                        border: '#EAE7F2',
+                        'text-primary': '#19152B',
+                        'text-secondary': '#77738A',
+                        'text-muted': '#A5A1B3',
+                    },
+                    fontFamily: {
+                        heading: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'card': '24px',
+                        'btn': '14px',
+                    },
+                    boxShadow: {
+                        'card': '0 8px 30px rgba(35,20,80,.06)',
+                        'floating': '0 16px 50px rgba(35,20,80,.12)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: #F8F7FC;
+            color: #19152B;
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-primary selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-white/70 backdrop-blur-xl border-b border-[#EAE7F2] sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="handleLogoClick()">
+                <div class="w-11 h-11 bg-primary text-white rounded-2xl flex items-center justify-center font-extrabold text-xl shadow-lg shadow-violet-500/20">✓</div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-lg font-extrabold text-text-primary tracking-tight">LAAprovai</h1>
+                        <span class="bg-surface-soft text-primary text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">PRO</span>
+                    </div>
+                    <p class="text-xs font-medium text-text-secondary">Felícia Personalizados — Central</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="logout()" class="text-xs font-bold text-rose-500 hover:text-rose-600 transition">Sair</button>
+                <button onclick="openModal()" class="bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-3 rounded-[14px] shadow-lg shadow-violet-500/20 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] text-sm flex items-center space-x-2">
+                    <span class="text-base">+</span>
+                    <span>Criar pedido</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        // Gatilho Master Admin
+        let logoClicks = 0;
+        function handleLogoClick() {
+            logoClicks++;
+            if (logoClicks === 4) {
+                logoClicks = 0;
+                window.location.href = 'admin_master.html';
+            }
+            setTimeout(() => { logoClicks = 0 }, 2000);
+        }
+    </script>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 py-8 flex-grow w-full space-y-8">
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+            <div class="bg-white rounded-[24px] border border-[#EAE7F2] shadow-[0_8px_30px_rgba(35,20,80,0.06)] p-6">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Total de Pedidos</p>
+                <h3 id="statTotal" class="text-3xl font-extrabold text-text-primary mt-2">0</h3>
+            </div>
+            <div class="bg-white rounded-[24px] border border-[#EAE7F2] shadow-[0_8px_30px_rgba(35,20,80,0.06)] p-6">
+                <p class="text-xs font-bold text-amber-600 uppercase tracking-wider">Pendente</p>
+                <h3 id="statPending" class="text-3xl font-extrabold text-amber-600 mt-2">0</h3>
+            </div>
+            <div class="bg-white rounded-[24px] border border-[#EAE7F2] shadow-[0_8px_30px_rgba(35,20,80,0.06)] p-6">
+                <p class="text-xs font-bold text-green-600 uppercase tracking-wider">Aprovado</p>
+                <h3 id="statApproved" class="text-3xl font-extrabold text-green-600 mt-2">0</h3>
+            </div>
+            <div class="bg-white rounded-[24px] border border-[#EAE7F2] shadow-[0_8px_30px_rgba(35,20,80,0.06)] p-6">
+                <p class="text-xs font-bold text-rose-600 uppercase tracking-wider">Com Ajustes</p>
+                <h3 id="statChanges" class="text-3xl font-extrabold text-rose-600 mt-2">0</h3>
+            </div>
+        </div>
+
+        <!-- Orders Table Card -->
+        <div class="bg-white rounded-[24px] border border-[#EAE7F2] shadow-[0_8px_30px_rgba(35,20,80,0.06)] overflow-hidden">
+            <div class="px-6 py-5 border-b border-[#EAE7F2] flex justify-between items-center bg-surface-soft/40">
+                <div>
+                    <h2 class="font-extrabold text-text-primary text-base">Fila de Produção e Comparações</h2>
+                    <p class="text-xs text-text-secondary mt-0.5">Compare a referência enviada pelo cliente com a arte criada.</p>
+                </div>
+                <span class="text-xs font-semibold text-primary bg-surface-soft px-3.5 py-1.5 rounded-full border border-violet-100">⚡ Sincronizado</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-soft/20 text-text-muted text-xs uppercase tracking-wider font-bold border-b border-[#EAE7F2]">
+                            <th class="py-4 px-6">Cliente / WhatsApp</th>
+                            <th class="py-4 px-6">Fotos (Referência vs. Arte)</th>
+                            <th class="py-4 px-6">Produto / Tema</th>
+                            <th class="py-4 px-6">Entrega</th>
+                            <th class="py-4 px-6">Status</th>
+                            <th class="py-4 px-6 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTable" class="divide-y divide-[#EAE7F2] text-sm">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-20 px-4">
+                <div class="w-20 h-20 bg-surface-soft text-primary rounded-[24px] flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">🎨</div>
+                <h3 class="font-bold text-text-primary text-lg">Nenhum pedido cadastrado ainda</h3>
+                <p class="text-text-secondary text-xs mt-1 max-w-sm mx-auto">Clique em "Criar pedido" acima para começar.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Novo Pedido -->
+    <div id="orderModal" class="fixed inset-0 bg-violet-950/30 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="bg-white/95 backdrop-blur-xl rounded-[24px] max-w-lg w-full p-8 shadow-[0_16px_50px_rgba(35,20,80,0.12)] border border-[#EAE7F2] max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="font-extrabold text-xl text-text-primary">Novo Pedido com Referência</h3>
+                    <p class="text-xs text-text-secondary mt-0.5">Selecione as fotos da galeria do seu computador/celular.</p>
+                </div>
+                <button onclick="closeModal()" class="w-9 h-9 bg-surface-soft hover:bg-violet-200/50 text-text-secondary rounded-full flex items-center justify-center font-bold text-lg transition">&times;</button>
+            </div>
+
+            <form id="orderForm" onsubmit="saveOrder(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Nome do Cliente</label>
+                    <input type="text" id="clientName" required placeholder="Ex: Camila Souza" class="w-full px-4 py-3 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">WhatsApp do Cliente</label>
+                        <input type="text" id="clientPhone" required placeholder="Ex: 21999998888" class="w-full px-4 py-3 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Data de Entrega</label>
+                        <input type="date" id="deliveryDate" required class="w-full px-4 py-3 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Título do Produto / Tema</label>
+                    <input type="text" id="productTitle" required placeholder="Ex: Topo de Bolo Vascão" class="w-full px-4 py-3 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-amber-600 uppercase mb-1.5">📷 Foto de Referência</label>
+                        <input type="file" id="refImageFile" accept="image/*" required class="w-full text-xs text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-green-600 uppercase mb-1.5">✨ Arte Produzida</label>
+                        <input type="file" id="artImageFile" accept="image/*" required class="w-full text-xs text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Observações para o Cliente</label>
+                    <textarea id="notes" rows="2" placeholder="Ex: Nome: Gabriel, Idade: 10." class="w-full px-4 py-3 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="px-6 py-3 rounded-[14px] border border-[#EAE7F2] text-text-secondary font-semibold text-sm hover:bg-background transition">Cancelar</button>
+                    <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-3 rounded-[14px] shadow-lg shadow-violet-500/20 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] text-sm">Criar pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-[#A5A1B3] py-10">
+        LAA-APPS: "Sua ideia virou app"
+    </footer>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Mestre — LAAprovai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6C4CF1',
+                        'primary-dark': '#4338CA',
+                        background: '#F8F7FC',
+                        surface: '#FFFFFF',
+                        border: '#EAE7F2',
+                        'text-primary': '#19152B',
+                        'text-secondary': '#77738A',
+                        'text-muted': '#A5A1B3',
+                    },
+                    borderRadius: { 'card': '24px', 'btn': '14px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #F8F7FC; color: #19152B; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+
+    <div class="max-w-6xl mx-auto space-y-8">
+        <header class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-extrabold text-text-primary tracking-tight">Painel Mestre LAAprovai</h1>
+                <p class="text-text-secondary mt-1 font-medium">Controle total das licenças e usuários do seu SaaS.</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="bg-white px-6 py-3 rounded-[14px] border border-[#EAE7F2] font-bold text-sm hover:bg-background transition shadow-sm">Voltar ao Painel</a>
+                <button onclick="openModal()" class="bg-primary hover:bg-primary-dark text-white font-bold px-6 py-3 rounded-[14px] shadow-lg shadow-violet-500/20 transition-all text-sm">+ Cadastrar Nova Loja</button>
+            </div>
+        </header>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-[24px] border border-[#EAE7F2] p-6 shadow-sm">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Lojas Ativas</p>
+                <h3 id="statLojas" class="text-3xl font-extrabold mt-2">1</h3>
+            </div>
+            <div class="bg-white rounded-[24px] border border-[#EAE7F2] p-6 shadow-sm">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Faturamento Mensal</p>
+                <h3 id="statFaturamento" class="text-3xl font-extrabold mt-2 text-green-600">R$ 29,90</h3>
+            </div>
+            <div class="bg-white rounded-[24px] border border-[#EAE7F2] p-6 shadow-sm">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Plano de Hoje</p>
+                <h3 class="text-3xl font-extrabold mt-2 text-primary">Escalar 🚀</h3>
+            </div>
+        </div>
+
+        <!-- Lojas Table -->
+        <div class="bg-white rounded-[24px] border border-[#EAE7F2] shadow-sm overflow-hidden">
+            <div class="px-6 py-5 border-b border-[#EAE7F2] flex justify-between items-center bg-white">
+                <h2 class="font-extrabold text-lg">Lojas Licenciadas</h2>
+                <span class="text-xs font-bold text-text-muted uppercase">Controle de Pagamento</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-[#F8F7FC] text-text-muted text-[11px] uppercase font-bold tracking-widest border-b border-[#EAE7F2]">
+                        <tr>
+                            <th class="py-4 px-6">Nome da Loja / Cliente</th>
+                            <th class="py-4 px-6">Plano / Valor</th>
+                            <th class="py-4 px-6">Senha de Acesso</th>
+                            <th class="py-4 px-6">Status</th>
+                            <th class="py-4 px-6 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="storesTable" class="divide-y divide-[#EAE7F2]">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Cadastro -->
+    <div id="storeModal" class="fixed inset-0 bg-violet-950/30 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-[24px] max-w-md w-full p-8 shadow-2xl border border-[#EAE7F2]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-extrabold text-xl text-text-primary">Cadastrar Nova Loja</h3>
+                <button onclick="closeModal()" class="w-9 h-9 bg-background text-text-secondary rounded-full flex items-center justify-center font-bold text-lg">&times;</button>
+            </div>
+
+            <form id="storeForm" onsubmit="saveStore(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Nome da Loja</label>
+                    <input type="text" id="storeName" required placeholder="Ex: Gráfica do João" class="w-full px-4 py-3.5 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Plano de Assinatura</label>
+                    <select id="storePlan" class="w-full px-4 py-3.5 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                        <option value="29.90">Plano Prata (R$ 29,90/mês)</option>
+                        <option value="49.90">Plano Ouro (R$ 49,90/mês)</option>
+                        <option value="0.00">Plano Cortesia (Grátis)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Definir Senha de Acesso</label>
+                    <input type="text" id="storePassword" required placeholder="Senha que a loja vai usar" class="w-full px-4 py-3.5 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-[14px] shadow-lg shadow-violet-500/20 transition-all">Ativar Licença da Loja</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-[#A5A1B3] py-10 font-medium">
+        LAA-APPS: "Sua ideia virou app"
+    </footer>
+
+    <script>
+        // Carregar lojas ou iniciar com a Felícia
+        let stores = JSON.parse(localStorage.getItem('aprovai_stores')) || [
+            { id: 'st_1', name: 'Felícia Personalizados', plan: '29.90', pass: 'felicia123', status: 'active' }
+        ];
+
+        function renderStores() {
+            const table = document.getElementById('storesTable');
+            table.innerHTML = '';
+
+            let totalFaturamento = 0;
+
+            stores.forEach(store => {
+                totalFaturamento += parseFloat(store.plan);
+
+                let statusBadge = store.status === 'active'
+                    ? '<span class="text-green-600 bg-green-50 px-3 py-1 rounded-full font-bold text-[10px] border border-green-100 uppercase">● Ativo</span>'
+                    : '<span class="text-rose-600 bg-rose-50 px-3 py-1 rounded-full font-bold text-[10px] border border-rose-100 uppercase">● Bloqueado</span>';
+
+                let row = `
+                    <tr class="hover:bg-background/50 transition">
+                        <td class="py-4 px-6 font-extrabold text-text-primary">${store.name}</td>
+                        <td class="py-4 px-6 text-sm font-medium text-text-secondary">R$ ${parseFloat(store.plan).toFixed(2).replace('.', ',')}</td>
+                        <td class="py-4 px-6 text-sm font-mono text-primary font-bold">${store.pass}</td>
+                        <td class="py-4 px-6">${statusBadge}</td>
+                        <td class="py-4 px-6 text-right">
+                            <button onclick="toggleStore('${store.id}')" class="text-xs font-bold ${store.status === 'active' ? 'text-rose-500' : 'text-green-600'} hover:underline">
+                                ${store.status === 'active' ? 'Bloquear' : 'Desbloquear'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                table.innerHTML += row;
+            });
+
+            document.getElementById('statLojas').innerText = stores.length;
+            document.getElementById('statFaturamento').innerText = `R$ ${totalFaturamento.toFixed(2).replace('.', ',')}`;
+            localStorage.setItem('aprovai_stores', JSON.stringify(stores));
+        }
+
+        function openModal() {
+            document.getElementById('storeModal').classList.remove('hidden');
+            document.getElementById('storeModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('storeModal').classList.remove('flex');
+            document.getElementById('storeModal').classList.add('hidden');
+        }
+
+        function saveStore(e) {
+            e.preventDefault();
+            const newStore = {
+                id: 'st_' + Date.now(),
+                name: document.getElementById('storeName').value,
+                plan: document.getElementById('storePlan').value,
+                pass: document.getElementById('storePassword').value,
+                status: 'active'
+            };
+            stores.push(newStore);
+            renderStores();
+            closeModal();
+            document.getElementById('storeForm').reset();
+            alert('🚀 Loja cadastrada e licença ativa!');
+        }
+
+        function toggleStore(id) {
+            const store = stores.find(s => s.id === id);
+            if (store) {
+                store.status = store.status === 'active' ? 'blocked' : 'active';
+                renderStores();
+            }
+        }
+
+        window.onload = renderStores;
+    </script>
+</body>
+</html>
