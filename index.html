@@ -218,8 +218,12 @@
             window.location.href = 'login.html';
         }
 
-        // Atualiza o nome da loja no header
-        document.querySelector('.text-text-secondary').innerText = currentStoreName + ' — Central';
+        // Atualiza o nome da loja no header e no título
+        const headerStoreName = document.querySelector('.text-text-secondary');
+        if (headerStoreName) {
+            headerStoreName.innerText = currentStoreName + ' — Central';
+        }
+        document.querySelector('h1').innerText = currentStoreName;
 
         let orders = JSON.parse(localStorage.getItem('aprovai_orders')) || [];
         // Filtra pedidos apenas da loja atual
