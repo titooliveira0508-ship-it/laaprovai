@@ -56,25 +56,38 @@
     </div>
 
     <script>
-        // Senha padrão inicial do Tito / Felícia Personalizados
-        // Em breve conectaremos ao banco Neon com usuários reais.
-        const SENHA_MESTRA = "felicia123";
-
-        // Se já estiver logado, redireciona direto
-        if (localStorage.getItem('aprovai_logged') === 'true') {
-            window.location.href = 'index.html';
-        }
+        // Limpa sessão anterior ao abrir a tela de login para obrigar a digitar a senha
+        localStorage.removeItem('aprovai_logged');
+        localStorage.removeItem('aprovai_current_store_id');
+        localStorage.removeItem('aprovai_current_store_name');
 
         function handleLogin(e) {
             e.preventDefault();
-            const pass = document.getElementById('loginPassword').value;
+            const pass = document.getElementById('loginPassword').value.trim();
 
-            if (pass === SENHA_MESTRA) {
+            // Carrega as lojas atualizadas do localStorage
+            const stores = JSON.parse(localStorage.getItem('aprovai_stores')) || [
+                { id: 'st_1', name: 'Felícia Personalizados', plan: '29.90', pass: 'felicia123', status: 'active' }
+            ];
+
+            // Procura uma loja com essa senha
+            const store = stores.find(s => s.pass === pass);
+
+            if (store) {
+                if (store.status === 'blocked') {
+                    alert('❌ Loja bloqueada! Entre em contato com o administrador.');
+                    return;
+                }
+
+                // Salva quem está logado e o ID da loja
                 localStorage.setItem('aprovai_logged', 'true');
-                alert('✨ Bem-vindo ao AprovAí!');
+                localStorage.setItem('aprovai_current_store_id', store.id);
+                localStorage.setItem('aprovai_current_store_name', store.name);
+
+                alert('✨ Bem-vindo ao AprovAí, ' + store.name + '!');
                 window.location.href = 'index.html';
             } else {
-                alert('❌ Senha incorreta! (Senha padrão de teste: felicia123)');
+                alert('❌ Senha incorreta! Verifique a senha cadastrada no Painel Mestre.');
             }
         }
     </script>

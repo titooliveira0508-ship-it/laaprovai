@@ -210,7 +210,20 @@
     </footer>
 
     <script>
+        const currentStoreId = localStorage.getItem('aprovai_current_store_id');
+        const currentStoreName = localStorage.getItem('aprovai_current_store_name');
+
+        // Verifica se está logado
+        if (localStorage.getItem('aprovai_logged') !== 'true' || !currentStoreId) {
+            window.location.href = 'login.html';
+        }
+
+        // Atualiza o nome da loja no header
+        document.querySelector('.text-text-secondary').innerText = currentStoreName + ' — Central';
+
         let orders = JSON.parse(localStorage.getItem('aprovai_orders')) || [];
+        // Filtra pedidos apenas da loja atual
+        let storeOrders = orders.filter(o => o.storeId === currentStoreId);
 
         function renderOrders() {
             const table = document.getElementById('ordersTable');
@@ -218,14 +231,15 @@
             if (!table) return;
 
             table.innerHTML = '';
+            storeOrders = orders.filter(o => o.storeId === currentStoreId);
 
-            if (orders.length === 0) {
+            if (storeOrders.length === 0) {
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
-                orders.sort((a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate));
+                storeOrders.sort((a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate));
 
-                orders.forEach(order => {
+                storeOrders.forEach(order => {
                     let statusBadge = '';
                     if (order.status === 'approved') {
                         statusBadge = '<span class="bg-green-50 text-green-700 px-3 py-1 rounded-full font-bold text-[10px] border border-green-100 uppercase">✓ Aprovado</span>';
@@ -265,11 +279,11 @@
                 });
             }
 
-            // Atualizar Stats
-            document.getElementById('statTotal').innerText = orders.length;
-            document.getElementById('statPending').innerText = orders.filter(o => o.status === 'pending').length;
-            document.getElementById('statApproved').innerText = orders.filter(o => o.status === 'approved').length;
-            document.getElementById('statChanges').innerText = orders.filter(o => o.status === 'changes').length;
+            // Atualizar Stats apenas da loja
+            document.getElementById('statTotal').innerText = storeOrders.length;
+            document.getElementById('statPending').innerText = storeOrders.filter(o => o.status === 'pending').length;
+            document.getElementById('statApproved').innerText = storeOrders.filter(o => o.status === 'approved').length;
+            document.getElementById('statChanges').innerText = storeOrders.filter(o => o.status === 'changes').length;
         }
 
         function openModal() {
@@ -312,6 +326,7 @@
 
                 const newOrder = {
                     id: 'ord_' + Date.now(),
+                    storeId: currentStoreId, // Vínculo da loja!
                     clientName: document.getElementById('clientName').value,
                     clientPhone: document.getElementById('clientPhone').value,
                     deliveryDate: document.getElementById('deliveryDate').value,
@@ -353,6 +368,9 @@
         }
 
         function logout() {
+            localStorage.removeItem('aprovai_logged');
+            localStorage.removeItem('aprovai_current_store_id');
+            localStorage.removeItem('aprovai_current_store_name');
             window.location.href = 'login.html';
         }
 
