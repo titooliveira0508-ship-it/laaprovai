@@ -150,6 +150,7 @@
                         <td class="py-4 px-6 text-sm font-mono text-primary font-bold">${store.pass}</td>
                         <td class="py-4 px-6">${statusBadge}</td>
                         <td class="py-4 px-6 text-right space-x-2">
+                            <button onclick="changePlan('${store.id}')" class="text-xs font-bold text-primary hover:underline">Trocar Plano</button>
                             <button onclick="toggleStore('${store.id}')" class="text-xs font-bold ${store.status === 'active' ? 'text-rose-500' : 'text-green-600'} hover:underline">
                                 ${store.status === 'active' ? 'Bloquear' : 'Desbloquear'}
                             </button>
@@ -195,6 +196,21 @@
             const store = stores.find(s => s.id === id);
             if (store) {
                 store.status = store.status === 'active' ? 'blocked' : 'active';
+                renderStores();
+            }
+        }
+
+        function changePlan(id) {
+            const store = stores.find(s => s.id === id);
+            if (store) {
+                const newPlan = prompt("Escolha o novo plano para " + store.name + ":\n1 - Plano Prata (R$ 29,90)\n2 - Plano Ouro (R$ 49,90)\n3 - Plano Cortesia (Grátis)",
+                    store.plan === '29.90' ? '1' : (store.plan === '49.90' ? '2' : '3'));
+
+                if (newPlan === '1') store.plan = '29.90';
+                else if (newPlan === '2') store.plan = '49.90';
+                else if (newPlan === '3') store.plan = '0.00';
+                else if (newPlan !== null) alert('Opção inválida');
+
                 renderStores();
             }
         }
