@@ -74,6 +74,17 @@
         </div>
     </header>
 
+    <!-- Faixa da demonstração -->
+    <div id="demoBanner" class="hidden bg-[#6C4CF1] text-white">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm font-semibold">Você está na demonstração — os pedidos são de exemplo e não são reais.</p>
+            <div class="flex items-center gap-3">
+                <a href="https://wa.me/5521998071729?text=Ol%C3%A1!%20Vi%20a%20demonstra%C3%A7%C3%A3o%20do%20AprovA%C3%AD%20e%20quero%20ativar%20a%20minha%20loja." target="_blank" rel="noopener" class="bg-white text-primary text-xs font-bold px-4 py-2 rounded-full">Quero ativar a minha loja</a>
+                <button onclick="exitDemo()" class="text-xs font-bold underline">Sair da demonstração</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Gatilho Master Admin
         let logoClicks = 0;
@@ -210,6 +221,44 @@
     </footer>
 
     <script>
+
+        // --- Demonstração (sem senha, sem alterar lojas reais) ---
+        var DEMO_STORE_ID = 'st_demo';
+        function demoImg(label, bg, fg) {
+            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="' + bg + '"/><text x="200" y="190" font-family="Arial,sans-serif" font-size="34" font-weight="bold" fill="' + fg + '" text-anchor="middle">' + label + '</text><text x="200" y="230" font-family="Arial,sans-serif" font-size="18" fill="' + fg + '" text-anchor="middle">AprovAí — demonstração</text></svg>';
+            return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+        }
+        function seedDemoOrders() {
+            var orders = JSON.parse(localStorage.getItem('aprovai_orders')) || [];
+            var demo = [
+                { id: 'demo_1', storeId: DEMO_STORE_ID, clientName: 'Camila Souza', clientPhone: '(21) 99999-1111', deliveryDate: '2026-11-14', productTitle: 'Topo de Bolo — 10 anos', notes: 'Nome: Gabriel, Idade: 10.', refImageUrl: demoImg('Referência', '#FEF3C7', '#92400E'), imageUrl: demoImg('Arte pronta', '#EDE9FE', '#5A3EE0'), status: 'pending', createdAt: '2026-11-07T10:00:00.000Z' },
+                { id: 'demo_2', storeId: DEMO_STORE_ID, clientName: 'Rafael Lima', clientPhone: '(21) 99999-2222', deliveryDate: '2026-11-12', productTitle: 'Camiseta personalizada', notes: 'Tamanho G, estampa frente e verso.', refImageUrl: demoImg('Referência', '#FEF3C7', '#92400E'), imageUrl: demoImg('Arte pronta', '#DCFCE7', '#166534'), status: 'approved', createdAt: '2026-11-06T10:00:00.000Z' },
+                { id: 'demo_3', storeId: DEMO_STORE_ID, clientName: 'Juliana Prado', clientPhone: '(21) 99999-3333', deliveryDate: '2026-11-13', productTitle: 'Caneca com foto', notes: 'Foto do casal, caneca branca.', refImageUrl: demoImg('Referência', '#FEF3C7', '#92400E'), imageUrl: demoImg('Arte pronta', '#FFE4E6', '#9F1239'), status: 'changes', feedback: 'Trocar a cor do nome para dourado.', createdAt: '2026-11-05T10:00:00.000Z' }
+            ];
+            demo.forEach(function (d) { if (!orders.some(function (o) { return o.id === d.id; })) orders.push(d); });
+            localStorage.setItem('aprovai_orders', JSON.stringify(orders));
+        }
+        function enterDemo() {
+            seedDemoOrders();
+            localStorage.setItem('aprovai_demo', 'true');
+            localStorage.setItem('aprovai_logged', 'true');
+            localStorage.setItem('aprovai_current_store_id', DEMO_STORE_ID);
+            localStorage.setItem('aprovai_current_store_name', 'Loja Demonstração');
+        }
+        function isDemo() { return localStorage.getItem('aprovai_demo') === 'true'; }
+        function exitDemo() {
+            var orders = JSON.parse(localStorage.getItem('aprovai_orders')) || [];
+            orders = orders.filter(function (o) { return o.storeId !== DEMO_STORE_ID; });
+            localStorage.setItem('aprovai_orders', JSON.stringify(orders));
+            localStorage.removeItem('aprovai_demo');
+            localStorage.removeItem('aprovai_logged');
+            localStorage.removeItem('aprovai_current_store_id');
+            localStorage.removeItem('aprovai_current_store_name');
+            window.location.href = 'login.html';
+        }
+
+        // Entrada da demonstração: ?demo=1 (link da LP) entra direto, sem senha.
+        if (new URLSearchParams(window.location.search).get('demo') === '1') { enterDemo(); }
         const currentStoreId = localStorage.getItem('aprovai_current_store_id');
         const currentStoreName = localStorage.getItem('aprovai_current_store_name');
 
@@ -234,6 +283,8 @@
             }
         }
         function goToPayment() { window.location.href = 'pagamento.html'; }
+
+        if (isDemo()) { var db = document.getElementById('demoBanner'); if (db) db.classList.remove('hidden'); }
 
         // Atualiza o nome da loja no header e no título
         const headerStoreName = document.querySelector('.text-secondary');
@@ -308,6 +359,7 @@
         }
 
         function openModal() {
+            if (isDemo()) { alert('Na demonstração não dá para criar pedidos — é só para ver como funciona. Fale no WhatsApp (21) 99807-1729 para ativar a sua loja.'); return; }
             document.getElementById('orderModal').classList.remove('hidden');
             document.getElementById('orderModal').classList.add('flex');
         }
@@ -387,6 +439,7 @@
         }
 
         function deleteOrder(id) {
+            if (isDemo()) { alert('Na demonstração não dá para excluir pedidos de exemplo.'); return; }
             if (confirm('Deseja excluir este pedido?')) {
                 orders = orders.filter(o => o.id !== id);
                 localStorage.setItem('aprovai_orders', JSON.stringify(orders));
@@ -395,6 +448,7 @@
         }
 
         function logout() {
+            localStorage.removeItem('aprovai_demo');
             localStorage.removeItem('aprovai_logged');
             localStorage.removeItem('aprovai_current_store_id');
             localStorage.removeItem('aprovai_current_store_name');
