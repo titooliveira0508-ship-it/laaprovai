@@ -5,19 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assine o AprovAí</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6C4CF1',
+                        'primary-dark': '#5A3EE0',
+                        ink: '#17132B',
+                        secondary: '#6E6A80',
+                        muted: '#A5A1B3',
+                        paper: '#F7F6FB',
+                        border: '#E9E6F2',
+                        soft: '#F1EEFF'
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F7F6FB; color: #17132B; }
+    </style>
 </head>
-<body class="bg-[#F8F7FC] flex items-center justify-center min-h-screen p-6">
-    <div class="max-w-md w-full bg-white rounded-[24px] shadow-lg border border-[#EAE7F2] p-8 text-center">
-        <div class="w-16 h-16 bg-primary text-white rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold mb-6">✓</div>
-        <h1 class="text-2xl font-extrabold text-[#19152B] mb-2">Assine o AprovAí</h1>
-        <p class="text-[#77738A] mb-8 text-sm">Escolha o seu plano e acelere suas aprovações!</p>
-
-        <div class="space-y-4">
-            <a href="https://mpago.la/25qnPKr" class="block w-full bg-primary text-white font-bold py-4 rounded-[14px] hover:bg-violet-700 transition">Plano Prata - R$ 29,90</a>
-            <a href="https://mpago.la/2cUpHUF" class="block w-full bg-white border-2 border-[#EAE7F2] text-[#19152B] font-bold py-4 rounded-[14px] hover:bg-[#F8F7FC] transition">Plano Ouro - R$ 49,90</a>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-white border-b border-[#E9E6F2]">
+        <div class="max-w-md mx-auto px-6 py-4 flex items-center space-x-3">
+            <div class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center font-extrabold text-lg">✓</div>
+            <div>
+                <p class="font-extrabold tracking-tight leading-none">AprovAí</p>
+                <p class="text-xs text-secondary mt-1">Gestão de aprovações para personalizados</p>
+            </div>
         </div>
+    </header>
 
-        <p class="text-xs text-[#A5A1B3] mt-8">LAA-APPS: Sua ideia virou app</p>
-    </div>
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-[0_1px_2px_rgba(23,19,43,0.05)] border border-[#E9E6F2] p-8">
+            <h1 class="text-2xl font-extrabold tracking-tight">Assine o AprovAí</h1>
+            <p class="text-secondary text-sm mt-2">Escolha o plano da sua loja. A cobrança é mensal, por loja, e a liberação é feita após o envio do comprovante.</p>
+
+            <div class="space-y-3 mt-8">
+                <a href="https://mpago.la/25qnPKr" class="block w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 px-5 rounded-xl transition text-left">
+                    <span class="flex justify-between items-center"><span>Plano Prata</span><span>R$ 29,90/mês</span></span>
+                    <span class="block text-xs font-medium text-white/80 mt-1">Referência e arte lado a lado, aprovação pelo cliente no link e fila de produção.</span>
+                </a>
+                <a href="https://mpago.la/2cUpHUF" class="block w-full bg-white border-2 border-primary text-ink font-bold py-4 px-5 rounded-xl hover:bg-soft transition text-left">
+                    <span class="flex justify-between items-center"><span>Plano Ouro</span><span>R$ 49,90/mês</span></span>
+                    <span class="block text-xs font-medium text-secondary mt-1">Tudo do Prata, com o plano completo da loja.</span>
+                </a>
+            </div>
+
+            <a href="https://wa.me/5521998071729?text=Ol%C3%A1!%20Enviei%20o%20comprovante%20do%20pagamento%20do%20AprovA%C3%AD." class="block w-full bg-[#1FA855] hover:bg-[#178A45] text-white font-bold py-3.5 px-5 rounded-xl transition text-center mt-4">Enviar comprovante no WhatsApp</a>
+            <p class="text-xs text-secondary text-center mt-3">Depois do pagamento, envie o comprovante pelo botão acima para liberar a licença.</p>
+
+            <p class="text-xs text-muted text-center mt-8">Dúvidas? Fale com o suporte no WhatsApp <a class="text-primary font-bold" href="https://wa.me/5521998071729">(21) 99807-1729</a></p>
+            <p class="text-xs text-muted text-center mt-2">LAA-APPS: Sua ideia virou app</p>
+        </div>
+    </main>
 </body>
 </html>
