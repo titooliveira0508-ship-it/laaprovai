@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Mestre — LAAprovai</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: '#6C4CF1',
-                        'primary-dark': '#4338CA',
-                        background: '#F8F7FC',
+                        'primary-dark': '#5A3EE0',
+                        background: '#F7F6FB',
                         surface: '#FFFFFF',
                         border: '#EAE7F2',
-                        'text-primary': '#19152B',
+                        'text-primary': '#17132B',
                         'text-secondary': '#77738A',
                         'text-muted': '#A5A1B3',
                     },
@@ -26,7 +26,7 @@
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #F8F7FC; color: #19152B; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F7F6FB; color: #17132B; }
         h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
@@ -35,40 +35,46 @@
     <div class="max-w-6xl mx-auto space-y-8">
         <header class="flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-extrabold text-text-primary tracking-tight">Painel Mestre LAAprovai</h1>
-                <p class="text-text-secondary mt-1 font-medium">Controle total das licenças e usuários do seu SaaS.</p>
+                <div class="flex items-center space-x-2">
+                    <h1 class="text-3xl font-extrabold text-[#17132B] tracking-tight">AprovAí</h1>
+                    <span class="bg-primary text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Admin</span>
+                </div>
+                <p class="text-secondary mt-1 font-medium">Painel Mestre — controle das lojas e das licenças.</p>
             </div>
             <div class="flex items-center space-x-4">
-                <a href="index.html" class="bg-white px-6 py-3 rounded-[14px] border border-[#EAE7F2] font-bold text-sm hover:bg-background transition shadow-sm">Voltar ao Painel</a>
-                <button onclick="openModal()" class="bg-primary hover:bg-primary-dark text-white font-bold px-6 py-3 rounded-[14px] shadow-lg shadow-violet-500/20 transition-all text-sm">+ Cadastrar Nova Loja</button>
+                <a href="index.html" class="bg-white px-6 py-3 rounded-xl border border-[#E9E6F2] font-bold text-sm hover:bg-[#F7F6FB] transition">Voltar ao Painel</a>
+                <button onclick="openModal()" class="bg-primary hover:bg-primary-dark text-white font-bold px-6 py-3 rounded-xl  transition-all text-sm">+ Cadastrar Nova Loja</button>
             </div>
         </header>
 
         <!-- Stats Row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-[24px] border border-[#EAE7F2] p-6 shadow-sm">
+            <div class="bg-white rounded-2xl border border-[#E9E6F2] p-6 shadow-[0_1px_2px_rgba(23,19,43,0.05)]">
                 <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Lojas Ativas</p>
                 <h3 id="statLojas" class="text-3xl font-extrabold mt-2">1</h3>
+                <p class="text-xs text-secondary mt-1">Lojas com licença ativa no AprovAí.</p>
             </div>
-            <div class="bg-white rounded-[24px] border border-[#EAE7F2] p-6 shadow-sm">
+            <div class="bg-white rounded-2xl border border-[#E9E6F2] p-6 shadow-[0_1px_2px_rgba(23,19,43,0.05)]">
                 <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Faturamento Mensal</p>
                 <h3 id="statFaturamento" class="text-3xl font-extrabold mt-2 text-green-600">R$ 29,90</h3>
+                <p class="text-xs text-secondary mt-1">Soma dos planos das lojas neste mês.</p>
             </div>
-            <div class="bg-white rounded-[24px] border border-[#EAE7F2] p-6 shadow-sm">
-                <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Plano de Hoje</p>
-                <h3 class="text-3xl font-extrabold mt-2 text-primary">Escalar 🚀</h3>
+            <div class="bg-white rounded-2xl border border-[#E9E6F2] p-6 shadow-[0_1px_2px_rgba(23,19,43,0.05)]">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Plano em destaque</p>
+                <h3 id="statPlano" class="text-3xl font-extrabold mt-2 text-primary">Prata</h3>
+                <p class="text-xs text-secondary mt-1">O plano mais usado pelas lojas.</p>
             </div>
         </div>
 
         <!-- Lojas Table -->
-        <div class="bg-white rounded-[24px] border border-[#EAE7F2] shadow-sm overflow-hidden">
-            <div class="px-6 py-5 border-b border-[#EAE7F2] flex justify-between items-center bg-white">
+        <div class="bg-white rounded-2xl border border-[#E9E6F2] shadow-[0_1px_2px_rgba(23,19,43,0.05)] overflow-hidden">
+            <div class="px-6 py-5 border-b border-[#E9E6F2] flex justify-between items-center bg-white">
                 <h2 class="font-extrabold text-lg">Lojas Licenciadas</h2>
                 <span class="text-xs font-bold text-text-muted uppercase">Controle de Pagamento</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                    <thead class="bg-[#F8F7FC] text-text-muted text-[11px] uppercase font-bold tracking-widest border-b border-[#EAE7F2]">
+                    <thead class="bg-[#F7F6FB] text-text-muted text-[11px] uppercase font-bold tracking-widest border-b border-[#E9E6F2]">
                         <tr>
                             <th class="py-4 px-6">Nome da Loja / Cliente</th>
                             <th class="py-4 px-6">Plano / Valor</th>
@@ -83,25 +89,43 @@
                 </table>
             </div>
         </div>
+
+    <!-- Loja em destaque -->
+        <div id="destaqueLoja" class="bg-white rounded-2xl border-2 border-primary shadow-[0_1px_2px_rgba(23,19,43,0.05)] p-6">
+            <p class="text-xs font-bold text-text-muted uppercase tracking-wider">Loja em destaque</p>
+            <div class="flex flex-wrap justify-between items-center gap-4 mt-3">
+                <div>
+                    <h3 id="destaqueNome" class="text-xl font-extrabold">Felícia Personalizados</h3>
+                    <p class="text-sm text-secondary mt-1"><span id="destaquePlano">Plano Prata — R$ 29,90/mês</span></p>
+                </div>
+                <button id="destaqueTrocar" onclick="changePlan('st_1')" class="bg-primary text-white font-bold px-5 py-3 rounded-xl text-sm">Trocar plano</button>
+            </div>
+        </div>
+
+        <!-- Ajuda / suporte -->
+        <div class="bg-white rounded-2xl border border-[#E9E6F2] shadow-[0_1px_2px_rgba(23,19,43,0.05)] p-6">
+            <h3 class="font-extrabold text-lg">Precisa de ajuda?</h3>
+            <p class="text-sm text-secondary mt-1">Fale com o suporte do AprovAí no WhatsApp <a class="text-primary font-bold" href="https://wa.me/5521998071729">(21) 99807-1729</a> — dúvidas sobre planos, pagamento e liberação de licença.</p>
+        </div>
     </div>
 
     <!-- Modal Novo Cadastro -->
-    <div id="storeModal" class="fixed inset-0 bg-violet-950/30 backdrop-blur-md hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-[24px] max-w-md w-full p-8 shadow-2xl border border-[#EAE7F2]">
+    <div id="storeModal" class="fixed inset-0 bg-[#17132B]/40 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-[0_1px_2px_rgba(23,19,43,0.05)] border border-[#E9E6F2]">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="font-extrabold text-xl text-text-primary">Cadastrar Nova Loja</h3>
-                <button onclick="closeModal()" class="w-9 h-9 bg-background text-text-secondary rounded-full flex items-center justify-center font-bold text-lg">&times;</button>
+                <button onclick="closeModal()" class="w-9 h-9 bg-background text-secondary rounded-full flex items-center justify-center font-bold text-lg">&times;</button>
             </div>
 
             <form id="storeForm" onsubmit="saveStore(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Nome da Loja</label>
-                    <input type="text" id="storeName" required placeholder="Ex: Gráfica do João" class="w-full px-4 py-3.5 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                    <label class="block text-xs font-bold text-secondary uppercase mb-1.5">Nome da Loja</label>
+                    <input type="text" id="storeName" required placeholder="Ex: Gráfica do João" class="w-full px-4 py-3.5 rounded-xl bg-background border border-[#E9E6F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Plano de Assinatura</label>
-                    <select id="storePlan" class="w-full px-4 py-3.5 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                    <label class="block text-xs font-bold text-secondary uppercase mb-1.5">Plano de Assinatura</label>
+                    <select id="storePlan" class="w-full px-4 py-3.5 rounded-xl bg-background border border-[#E9E6F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
                         <option value="29.90">Plano Prata (R$ 29,90/mês)</option>
                         <option value="49.90">Plano Ouro (R$ 49,90/mês)</option>
                         <option value="0.00">Plano Cortesia (Grátis)</option>
@@ -109,12 +133,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-text-secondary uppercase mb-1.5">Definir Senha de Acesso</label>
-                    <input type="text" id="storePassword" required placeholder="Senha que a loja vai usar" class="w-full px-4 py-3.5 rounded-[14px] bg-background border border-[#EAE7F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
+                    <label class="block text-xs font-bold text-secondary uppercase mb-1.5">Definir Senha de Acesso</label>
+                    <input type="text" id="storePassword" required placeholder="Senha que a loja vai usar" class="w-full px-4 py-3.5 rounded-xl bg-background border border-[#E9E6F2] focus:bg-white focus:ring-2 focus:ring-primary focus:outline-hidden text-sm transition">
                 </div>
 
                 <div class="pt-4">
-                    <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-[14px] shadow-lg shadow-violet-500/20 transition-all">Ativar Licença da Loja</button>
+                    <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-xl  transition-all">Ativar Licença da Loja</button>
                 </div>
             </form>
         </div>
@@ -143,10 +167,12 @@
                     ? '<span class="text-green-600 bg-green-50 px-3 py-1 rounded-full font-bold text-[10px] border border-green-100 uppercase">● Ativo</span>'
                     : '<span class="text-rose-600 bg-rose-50 px-3 py-1 rounded-full font-bold text-[10px] border border-rose-100 uppercase">● Bloqueado</span>';
 
+                const planNames = { '0.00': 'Cortesia', '29.90': 'Prata', '49.90': 'Ouro' };
+                const planName = planNames[store.plan] || 'Cortesia';
                 let row = `
-                    <tr class="hover:bg-background/50 transition">
-                        <td class="py-4 px-6 font-extrabold text-text-primary">${store.name}</td>
-                        <td class="py-4 px-6 text-sm font-medium text-text-secondary">R$ ${parseFloat(store.plan).toFixed(2).replace('.', ',')}</td>
+                    <tr class="hover:bg-[#F7F6FB]/50 transition">
+                        <td class="py-4 px-6 font-extrabold text-[#17132B]">${store.name}</td>
+                        <td class="py-4 px-6 text-sm font-medium text-secondary">${planName} — R$ ${parseFloat(store.plan).toFixed(2).replace('.', ',')}/mês</td>
                         <td class="py-4 px-6 text-sm font-mono text-primary font-bold">${store.pass}</td>
                         <td class="py-4 px-6">${statusBadge}</td>
                         <td class="py-4 px-6 text-right space-x-2">
@@ -163,6 +189,17 @@
 
             document.getElementById('statLojas').innerText = stores.length;
             document.getElementById('statFaturamento').innerText = `R$ ${totalFaturamento.toFixed(2).replace('.', ',')}`;
+            const planCounts = { 'Prata': 0, 'Ouro': 0, 'Cortesia': 0 };
+            stores.forEach(s => { const n = { '0.00': 'Cortesia', '29.90': 'Prata', '49.90': 'Ouro' }[s.plan] || 'Cortesia'; planCounts[n]++; });
+            const topPlan = Object.entries(planCounts).sort((a, b) => b[1] - a[1])[0][0];
+            const statPlano = document.getElementById('statPlano'); if (statPlano) statPlano.innerText = topPlan;
+            const first = stores[0];
+            if (first) {
+                const dn = document.getElementById('destaqueNome'); if (dn) dn.innerText = first.name;
+                const dp = document.getElementById('destaquePlano');
+                if (dp) dp.innerText = ({ '0.00': 'Plano Cortesia — Grátis', '29.90': 'Plano Prata — R$ 29,90/mês', '49.90': 'Plano Ouro — R$ 49,90/mês' })[first.plan] || 'Plano Cortesia — Grátis';
+                const dt = document.getElementById('destaqueTrocar'); if (dt) dt.setAttribute('onclick', "changePlan('" + first.id + "')");
+            }
             localStorage.setItem('aprovai_stores', JSON.stringify(stores));
         }
 
