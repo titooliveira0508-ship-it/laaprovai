@@ -114,9 +114,12 @@
             const pass = document.getElementById('loginPassword').value.trim();
 
             // Carrega as lojas atualizadas do localStorage
-            const stores = JSON.parse(localStorage.getItem('aprovai_stores')) || [
-                { id: 'st_1', name: 'Felícia Personalizados', plan: '29.90', pass: 'felicia123', status: 'active' }
-            ];
+            const stores = JSON.parse(localStorage.getItem('aprovai_stores')) || [];
+
+            if (!stores.length) {
+                alert('Nenhuma loja cadastrada neste aparelho. Fale com o suporte no WhatsApp (21) 99807-1729.');
+                return;
+            }
 
             // Procura uma loja com essa senha
             const store = stores.find(s => s.pass === pass);
